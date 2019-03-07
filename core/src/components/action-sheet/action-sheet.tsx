@@ -24,14 +24,12 @@ export class ActionSheet implements ComponentInterface, OverlayInterface {
 
   @Element() el!: HTMLElement;
 
-  @Prop({ connect: 'ion-animation-controller' }) animationCtrl!: HTMLIonAnimationControllerElement;
   @Prop({ context: 'config' }) config!: Config;
   /** @internal */
   @Prop() overlayIndex!: number;
 
   /**
    * The mode determines which platform styles to use.
-   * Possible values are: `"ios"` or `"md"`.
    */
   @Prop() mode!: Mode;
 
@@ -62,7 +60,7 @@ export class ActionSheet implements ComponentInterface, OverlayInterface {
   @Prop() cssClass?: string | string[];
 
   /**
-   * If `true`, the action sheet will be dismissed when the backdrop is clicked. Defaults to `true`.
+   * If `true`, the action sheet will be dismissed when the backdrop is clicked.
    */
   @Prop() backdropDismiss = true;
 
@@ -77,24 +75,14 @@ export class ActionSheet implements ComponentInterface, OverlayInterface {
   @Prop() subHeader?: string;
 
   /**
-   * If `true`, the action sheet will be translucent. Defaults to `false`.
+   * If `true`, the action sheet will be translucent. Only applies when the mode is `"ios"` and the device supports backdrop-filter.
    */
   @Prop() translucent = false;
 
   /**
-   * If `true`, the action sheet will animate. Defaults to `true`.
+   * If `true`, the action sheet will animate.
    */
   @Prop() animated = true;
-
-  /**
-   * Emitted after the alert has loaded.
-   */
-  @Event() ionActionSheetDidLoad!: EventEmitter<void>;
-
-  /**
-   * Emitted after the alert has unloaded.
-   */
-  @Event() ionActionSheetDidUnload!: EventEmitter<void>;
 
   /**
    * Emitted after the alert has presented.
@@ -115,14 +103,6 @@ export class ActionSheet implements ComponentInterface, OverlayInterface {
    * Emitted after the alert has dismissed.
    */
   @Event({ eventName: 'ionActionSheetDidDismiss' }) didDismiss!: EventEmitter<OverlayEventDetail>;
-
-  componentDidLoad() {
-    this.ionActionSheetDidLoad.emit();
-  }
-
-  componentDidUnload() {
-    this.ionActionSheetDidUnload.emit();
-  }
 
   @Listen('ionBackdropTap')
   protected onBackdropTap() {
@@ -210,6 +190,8 @@ export class ActionSheet implements ComponentInterface, OverlayInterface {
 
   hostData() {
     return {
+      'role': 'dialog',
+      'aria-modal': 'true',
       style: {
         zIndex: 20000 + this.overlayIndex,
       },
@@ -242,6 +224,7 @@ export class ActionSheet implements ComponentInterface, OverlayInterface {
                   {b.icon && <ion-icon icon={b.icon} lazy={false} class="action-sheet-icon" />}
                   {b.text}
                 </span>
+                {this.mode === 'md' && <ion-ripple-effect></ion-ripple-effect>}
               </button>
             )}
           </div>
@@ -249,7 +232,6 @@ export class ActionSheet implements ComponentInterface, OverlayInterface {
           {cancelButton &&
             <div class="action-sheet-group action-sheet-group-cancel">
               <button
-                ion-activatable
                 type="button"
                 class={buttonClass(cancelButton)}
                 onClick={() => this.buttonClick(cancelButton)}
@@ -275,6 +257,7 @@ export class ActionSheet implements ComponentInterface, OverlayInterface {
 function buttonClass(button: ActionSheetButton): CssClassMap {
   return {
     'action-sheet-button': true,
+    'ion-activatable': true,
     [`action-sheet-${button.role}`]: button.role !== undefined,
     ...getClassMap(button.cssClass),
   };

@@ -1,5 +1,5 @@
 
-export class GestureController {
+class GestureController {
 
   private gestureId = 0;
   private requestedStart = new Map<number, number>();
@@ -60,8 +60,8 @@ export class GestureController {
       this.capturedId = id;
       requestedStart.clear();
 
-      const event = new CustomEvent('ionGestureCaptured', { detail: gestureName });
-      this.doc.body.dispatchEvent(event);
+      const event = new CustomEvent('ionGestureCaptured', { detail: { gestureName } });
+      this.doc.dispatchEvent(event);
       return true;
     }
     requestedStart.delete(id);
@@ -142,16 +142,18 @@ export class GestureController {
   }
 }
 
-export class GestureDelegate {
+class GestureDelegate {
   private ctrl?: GestureController;
+  private priority: number;
 
   constructor(
     ctrl: GestureController,
     private id: number,
     private name: string,
-    private priority: number,
+    priority: number,
     private disableScroll: boolean
   ) {
+    this.priority = priority * 1000000 + id;
     this.ctrl = ctrl;
   }
 
@@ -200,7 +202,7 @@ export class GestureDelegate {
   }
 }
 
-export class BlockerDelegate {
+class BlockerDelegate {
 
   private ctrl?: GestureController;
 

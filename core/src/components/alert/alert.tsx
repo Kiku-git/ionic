@@ -29,14 +29,13 @@ export class Alert implements ComponentInterface, OverlayInterface {
 
   @Element() el!: HTMLStencilElement;
 
-  @Prop({ connect: 'ion-animation-controller' }) animationCtrl!: HTMLIonAnimationControllerElement;
   @Prop({ context: 'config' }) config!: Config;
+
   /** @internal */
   @Prop() overlayIndex!: number;
 
   /**
    * The mode determines which platform styles to use.
-   * Possible values are: `"ios"` or `"md"`.
    */
   @Prop() mode!: Mode;
 
@@ -87,29 +86,19 @@ export class Alert implements ComponentInterface, OverlayInterface {
   @Prop({ mutable: true }) inputs: AlertInput[] = [];
 
   /**
-   * If `true`, the alert will be dismissed when the backdrop is clicked. Defaults to `true`.
+   * If `true`, the alert will be dismissed when the backdrop is clicked.
    */
   @Prop() backdropDismiss = true;
 
   /**
-   * If `true`, the alert will be translucent. Defaults to `false`.
+   * If `true`, the alert will be translucent.
    */
   @Prop() translucent = false;
 
   /**
-   * If `true`, the alert will animate. Defaults to `true`.
+   * If `true`, the alert will animate.
    */
   @Prop() animated = true;
-
-  /**
-   * Emitted after the alert has presented.
-   */
-  @Event() ionAlertDidLoad!: EventEmitter<void>;
-
-  /**
-   * Emitted before the alert has presented.
-   */
-  @Event() ionAlertDidUnload!: EventEmitter<void>;
 
   /**
    * Emitted after the alert has presented.
@@ -156,7 +145,7 @@ export class Alert implements ComponentInterface, OverlayInterface {
       type: i.type || 'text',
       name: i.name || `${index}`,
       placeholder: i.placeholder || '',
-      value: i.value || '',
+      value: i.value,
       label: i.label,
       checked: !!i.checked,
       disabled: !!i.disabled,
@@ -170,14 +159,6 @@ export class Alert implements ComponentInterface, OverlayInterface {
   componentWillLoad() {
     this.inputsChanged();
     this.buttonsChanged();
-  }
-
-  componentDidLoad() {
-    this.ionAlertDidLoad.emit();
-  }
-
-  componentDidUnload() {
-    this.ionAlertDidUnload.emit();
   }
 
   @Listen('ionBackdropTap')
@@ -323,12 +304,12 @@ export class Alert implements ComponentInterface, OverlayInterface {
           <button
             type="button"
             onClick={() => this.cbClick(i)}
-            aria-checked={i.checked ? 'true' : null}
+            aria-checked={`${i.checked}`}
             id={i.id}
             disabled={i.disabled}
             tabIndex={0}
             role="checkbox"
-            class="alert-tappable alert-checkbox alert-checkbox-button"
+            class="alert-tappable alert-checkbox alert-checkbox-button ion-focusable"
           >
             <div class="alert-button-inner">
               <div class="alert-checkbox-icon">
@@ -356,11 +337,11 @@ export class Alert implements ComponentInterface, OverlayInterface {
           <button
             type="button"
             onClick={() => this.rbClick(i)}
-            aria-checked={i.checked ? 'true' : null}
+            aria-checked={`${i.checked}`}
             disabled={i.disabled}
             id={i.id}
             tabIndex={0}
-            class="alert-radio-button alert-tappable alert-radio"
+            class="alert-radio-button alert-tappable alert-radio ion-focusable"
             role="radio"
           >
             <div class="alert-button-inner">
@@ -369,7 +350,6 @@ export class Alert implements ComponentInterface, OverlayInterface {
                 {i.label}
               </div>
             </div>
-            {this.mode === 'md' && <ion-ripple-effect></ion-ripple-effect>}
           </button>
         ))}
       </div>
@@ -405,7 +385,8 @@ export class Alert implements ComponentInterface, OverlayInterface {
 
   hostData() {
     return {
-      role: 'alertdialog',
+      'role': 'dialog',
+      'aria-modal': 'true',
       style: {
         zIndex: 20000 + this.overlayIndex,
       },
@@ -425,10 +406,11 @@ export class Alert implements ComponentInterface, OverlayInterface {
     return (
       <div class={alertButtonGroupClass}>
         {buttons.map(button =>
-          <button type="button" ion-activatable class={buttonClass(button)} tabIndex={0} onClick={() => this.buttonClick(button)}>
+          <button type="button" class={buttonClass(button)} tabIndex={0} onClick={() => this.buttonClick(button)}>
             <span class="alert-button-inner">
               {button.text}
             </span>
+            {this.mode === 'md' && <ion-ripple-effect></ion-ripple-effect>}
           </button>
         )}
       </div>
@@ -470,6 +452,8 @@ export class Alert implements ComponentInterface, OverlayInterface {
 function buttonClass(button: AlertButton): CssClassMap {
   return {
     'alert-button': true,
+    'ion-focusable': true,
+    'ion-activatable': true,
     ...getClassMap(button.cssClass)
   };
 }

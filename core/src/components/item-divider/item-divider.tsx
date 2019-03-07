@@ -3,6 +3,11 @@ import { Component, ComponentInterface, Element, Prop } from '@stencil/core';
 import { Color, Mode } from '../../interface';
 import { createColorClasses } from '../../utils/theme';
 
+/**
+ * @slot - Content is placed between the named slots if provided without a slot.
+ * @slot start - Content is placed to the left of the divider text in LTR, and to the right in RTL.
+ * @slot end - Content is placed to the right of the divider text in LTR, and to the left in RTL.
+ */
 @Component({
   tag: 'ion-item-divider',
   styleUrls: {
@@ -24,15 +29,23 @@ export class ItemDivider implements ComponentInterface {
 
   /**
    * The mode determines which platform styles to use.
-   * Possible values are: `"ios"` or `"md"`.
    */
   @Prop() mode!: Mode;
+
+  /**
+   * When it's set to `true`, the item-divider will stay visible when it reaches the top
+   * of the viewport until the next `ion-item-divider` replaces it.
+   *
+   * This feature relies in `position:sticky`:
+   * https://caniuse.com/#feat=css-sticky
+   */
+  @Prop() sticky = false;
 
   componentDidLoad() {
     // Change the button size to small for each ion-button in the item
     // unless the size is explicitly set
     Array.from(this.el.querySelectorAll('ion-button')).forEach(button => {
-      if (!button.size) {
+      if (button.size === undefined) {
         button.size = 'small';
       }
     });
@@ -40,7 +53,11 @@ export class ItemDivider implements ComponentInterface {
 
   hostData() {
     return {
-      class: createColorClasses(this.color)
+      class: {
+        ...createColorClasses(this.color),
+        'item-divider-sticky': this.sticky,
+        'item': true,
+      }
     };
   }
 

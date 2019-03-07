@@ -16,19 +16,20 @@ import { mdLeaveAnimation } from './animations/md.leave';
   styleUrls: {
     ios: 'modal.ios.scss',
     md: 'modal.md.scss'
-  }
+  },
+  scoped: true
 })
 export class Modal implements ComponentInterface, OverlayInterface {
 
   private usersElement?: HTMLElement;
 
-  animation: Animation | undefined;
   presented = false;
+  animation: Animation | undefined;
 
   @Element() el!: HTMLElement;
 
-  @Prop({ connect: 'ion-animation-controller' }) animationCtrl!: HTMLIonAnimationControllerElement;
   @Prop({ context: 'config' }) config!: Config;
+
   /** @internal */
   @Prop() overlayIndex!: number;
 
@@ -37,7 +38,6 @@ export class Modal implements ComponentInterface, OverlayInterface {
 
   /**
    * The mode determines which platform styles to use.
-   * Possible values are: `"ios"` or `"md"`.
    */
   @Prop() mode!: Mode;
 
@@ -73,29 +73,19 @@ export class Modal implements ComponentInterface, OverlayInterface {
   @Prop() cssClass?: string | string[];
 
   /**
-   * If `true`, the modal will be dismissed when the backdrop is clicked. Defaults to `true`.
+   * If `true`, the modal will be dismissed when the backdrop is clicked.
    */
   @Prop() backdropDismiss = true;
 
   /**
-   * If `true`, a backdrop will be displayed behind the modal. Defaults to `true`.
+   * If `true`, a backdrop will be displayed behind the modal.
    */
   @Prop() showBackdrop = true;
 
   /**
-   * If `true`, the modal will animate. Defaults to `true`.
+   * If `true`, the modal will animate.
    */
   @Prop() animated = true;
-
-  /**
-   * Emitted after the modal has loaded.
-   */
-  @Event() ionModalDidLoad!: EventEmitter<void>;
-
-  /**
-   * Emitted after the modal has unloaded.
-   */
-  @Event() ionModalDidUnload!: EventEmitter<void>;
 
   /**
    * Emitted after the modal has presented.
@@ -116,14 +106,6 @@ export class Modal implements ComponentInterface, OverlayInterface {
    * Emitted after the modal has dismissed.
    */
   @Event({ eventName: 'ionModalDidDismiss' }) didDismiss!: EventEmitter<OverlayEventDetail>;
-
-  componentDidLoad() {
-    this.ionModalDidLoad.emit();
-  }
-
-  componentDidUnload() {
-    this.ionModalDidUnload.emit();
-  }
 
   @Listen('ionDismiss')
   protected onDismiss(ev: UIEvent) {
@@ -209,6 +191,7 @@ export class Modal implements ComponentInterface, OverlayInterface {
   hostData() {
     return {
       'no-router': true,
+      'aria-modal': 'true',
       class: {
         ...createThemedClasses(this.mode, 'modal'),
         ...getClassMap(this.cssClass)

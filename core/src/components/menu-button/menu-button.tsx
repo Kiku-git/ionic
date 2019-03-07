@@ -23,7 +23,6 @@ export class MenuButton implements ComponentInterface {
 
   /**
    * The mode determines which platform styles to use.
-   * Possible values are: `"ios"` or `"md"`.
    */
   @Prop() mode!: Mode;
 
@@ -39,10 +38,9 @@ export class MenuButton implements ComponentInterface {
 
   hostData() {
     return {
-      'ion-activatable': true,
       class: {
-        // ion-buttons target .button
-        'button': true
+        'button': true,  // ion-buttons target .button
+        'ion-activatable': true,
       }
     };
   }
@@ -55,7 +53,7 @@ export class MenuButton implements ComponentInterface {
           <slot>
             <ion-icon icon={menuIcon} mode={this.mode} color={this.color} lazy={false} />
           </slot>
-          {this.mode === 'md' && <ion-ripple-effect></ion-ripple-effect>}
+          {this.mode === 'md' && <ion-ripple-effect type="unbounded"></ion-ripple-effect>}
         </button>
       </ion-menu-toggle>
     );

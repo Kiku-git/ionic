@@ -1,6 +1,6 @@
 import { Component, ComponentInterface, Event, EventEmitter, Listen, Prop } from '@stencil/core';
 
-import { GESTURE_CONTROLLER } from '../../utils/gesture/gesture-controller';
+import { GESTURE_CONTROLLER } from '../../utils/gesture';
 import { now } from '../../utils/helpers';
 
 @Component({
@@ -21,17 +21,17 @@ export class Backdrop implements ComponentInterface {
   @Prop({ context: 'document' }) doc!: Document;
 
   /**
-   * If `true`, the backdrop will be visible. Defaults to `true`.
+   * If `true`, the backdrop will be visible.
    */
   @Prop() visible = true;
 
   /**
-   * If `true`, the backdrop will can be clicked and will emit the `ionBackdropTap` event. Defaults to `true`.
+   * If `true`, the backdrop will can be clicked and will emit the `ionBackdropTap` event.
    */
   @Prop() tappable = true;
 
   /**
-   * If `true`, the backdrop will stop propagation on tap. Defaults to `true`.
+   * If `true`, the backdrop will stop propagation on tap.
    */
   @Prop() stopPropagation = true;
 

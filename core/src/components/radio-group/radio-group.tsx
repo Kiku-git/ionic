@@ -1,6 +1,6 @@
 import { Component, ComponentInterface, Element, Event, EventEmitter, Listen, Prop, Watch } from '@stencil/core';
 
-import { InputChangeEvent } from '../../interface';
+import { RadioGroupChangeEventDetail } from '../../interface';
 
 @Component({
   tag: 'ion-radio-group'
@@ -14,7 +14,7 @@ export class RadioGroup implements ComponentInterface {
   @Element() el!: HTMLElement;
 
   /**
-   * If `true`, the radios can be deselected. Default false.
+   * If `true`, the radios can be deselected.
    */
   @Prop() allowEmptySelection = false;
 
@@ -22,18 +22,6 @@ export class RadioGroup implements ComponentInterface {
    * The name of the control, which is submitted with the form data.
    */
   @Prop() name: string = this.inputId;
-
-  /**
-   * If `true`, the user cannot interact with the radio group. Default false.
-   */
-  @Prop() disabled = false;
-
-  @Watch('disabled')
-  disabledChanged() {
-    for (const radio of this.radios) {
-      radio.disabled = this.disabled;
-    }
-  }
 
   /**
    * the value of the radio group.
@@ -49,7 +37,7 @@ export class RadioGroup implements ComponentInterface {
   /**
    * Emitted when the value has changed.
    */
-  @Event() ionChange!: EventEmitter<InputChangeEvent>;
+  @Event() ionChange!: EventEmitter<RadioGroupChangeEventDetail>;
 
   @Listen('ionRadioDidLoad')
   onRadioDidLoad(ev: Event) {
@@ -85,6 +73,17 @@ export class RadioGroup implements ComponentInterface {
     }
   }
 
+  @Listen('ionDeselect')
+  onRadioDeselect(ev: Event) {
+    if (this.allowEmptySelection) {
+      const selectedRadio = ev.target as HTMLIonRadioElement | null;
+      if (selectedRadio) {
+        selectedRadio.checked = false;
+        this.value = undefined;
+      }
+    }
+  }
+
   componentDidLoad() {
     // Get the list header if it exists and set the id
     // this is used to set aria-labelledby
@@ -99,7 +98,6 @@ export class RadioGroup implements ComponentInterface {
       }
     }
 
-    this.disabledChanged();
     this.updateRadios();
   }
 

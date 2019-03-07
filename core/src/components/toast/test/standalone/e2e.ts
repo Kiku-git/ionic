@@ -1,17 +1,7 @@
-import { newE2EPage } from '@stencil/core/testing';
+import { testToast } from '../test.utils';
 
-it('toast: standalone', async () => {
-  const page = await newE2EPage({
-    url: '/src/components/toast/test/standalone?ionic:_testing=true'
-  });
+const DIRECTORY = 'standalone';
 
-  const button = await page.find('#basic');
-  await button.click();
-
-  const toast = await page.find('ion-toast');
-  await toast.waitForVisible();
-
-  const compare = await page.compareScreenshot();
-  expect(compare).toMatchScreenshot();
-
+test('toast: standalone', async () => {
+  await testToast(DIRECTORY, '#basic-toast');
 });

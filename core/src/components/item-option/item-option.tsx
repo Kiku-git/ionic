@@ -1,8 +1,16 @@
-import { Component, ComponentInterface, Element, Prop } from '@stencil/core';
+import { Component, ComponentInterface, Element, Listen, Prop } from '@stencil/core';
 
 import { Color, Mode } from '../../interface';
 import { createColorClasses } from '../../utils/theme';
 
+/**
+ * @slot - Content is placed between the named slots if provided without a slot.
+ * @slot start - Content is placed to the left of the option text in LTR, and to the right in RTL.
+ * @slot top - Content is placed above the option text.
+ * @slot icon-only - Should be used on an icon in an option that has no text.
+ * @slot bottom - Content is placed below the option text.
+ * @slot end - Content is placed to the right of the option text in LTR, and to the left in RTL.
+ */
 @Component({
   tag: 'ion-item-option',
   styleUrls: {
@@ -24,17 +32,16 @@ export class ItemOption implements ComponentInterface {
 
   /**
    * The mode determines which platform styles to use.
-   * Possible values are: `"ios"` or `"md"`.
    */
   @Prop() mode!: Mode;
 
   /**
-   * If `true`, the user cannot interact with the item option. Defaults to `false`.
+   * If `true`, the user cannot interact with the item option.
    */
   @Prop() disabled = false;
 
   /**
-   * If `true`, the option will expand to take up the available width and cover any other options. Defaults to `false`.
+   * If `true`, the option will expand to take up the available width and cover any other options.
    */
   @Prop() expandable = false;
 
@@ -44,23 +51,26 @@ export class ItemOption implements ComponentInterface {
    */
   @Prop() href?: string;
 
-  private clickedOptionButton(ev: Event): boolean {
+  @Listen('click')
+  onClick(ev: Event) {
     const el = (ev.target as HTMLElement).closest('ion-item-option');
-    return !!el;
+    if (el) {
+      ev.preventDefault();
+    }
   }
 
   hostData() {
     return {
-      'ion-activatable': true,
       class: {
         ...createColorClasses(this.color),
         'item-option-expandable': this.expandable,
+        'ion-activatable': true,
       }
     };
   }
 
   render() {
-    const TagType = this.href === undefined ? 'button' : 'a';
+    const TagType = this.href === undefined ? 'button' : 'a' as any;
 
     return (
       <TagType
@@ -68,7 +78,6 @@ export class ItemOption implements ComponentInterface {
         class="button-native"
         disabled={this.disabled}
         href={this.href}
-        onClick={this.clickedOptionButton.bind(this)}
       >
         <span class="button-inner">
           <slot name="start"></slot>

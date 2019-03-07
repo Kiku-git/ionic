@@ -1,3 +1,16 @@
+/**
+ * Gets a date value given a format
+ * Defaults to the current date if
+ * no date given
+ */
+export function getDateValue(date: DatetimeData, format: string): number {
+  const getValue = getValueFromFormat(date, format);
+
+  if (getValue) { return getValue; }
+
+  const defaultDate = parseDate(new Date().toISOString());
+  return getValueFromFormat((defaultDate as DatetimeData), format);
+}
 
 export function renderDatetime(template: string, value: DatetimeData | undefined, locale: LocaleData): string | undefined {
   if (value === undefined) {
@@ -178,7 +191,7 @@ export function parseDate(val: string | undefined | null): DatetimeData | undefi
   // ISO 8601 format: 1994-12-15T13:47:20Z
   let parse: any[] | null = null;
 
-  if (val != null) {
+  if (val != null && val !== '') {
     // try parsing for just time first, HH:MM
     parse = TIME_REGEXP.exec(val);
     if (parse) {

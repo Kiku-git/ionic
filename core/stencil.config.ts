@@ -1,24 +1,25 @@
 import { Config } from '@stencil/core';
 import { sass } from '@stencil/sass';
 
+// @ts-ignore
+import { apiSpecGenerator } from './scripts/api-spec-generator';
+
 export const config: Config = {
   namespace: 'Ionic',
   bundles: [
     { components: ['ion-action-sheet', 'ion-action-sheet-controller'] },
     { components: ['ion-alert', 'ion-alert-controller'] },
     { components: ['ion-anchor', 'ion-back-button'] },
-    { components: ['ion-animation-controller'] },
     { components: ['ion-app', 'ion-buttons', 'ion-content', 'ion-footer', 'ion-header', 'ion-title', 'ion-toolbar'] },
     { components: ['ion-avatar', 'ion-badge', 'ion-thumbnail'] },
     { components: ['ion-backdrop'] },
     { components: ['ion-button', 'ion-icon'] },
     { components: ['ion-card', 'ion-card-content', 'ion-card-header', 'ion-card-title', 'ion-card-subtitle'] },
     { components: ['ion-checkbox'] },
-    { components: ['ion-chip', 'ion-chip-button', 'ion-chip-icon'] },
+    { components: ['ion-chip'] },
     { components: ['ion-datetime', 'ion-picker', 'ion-picker-column', 'ion-picker-controller'] },
     { components: ['ion-fab', 'ion-fab-button', 'ion-fab-list'] },
     { components: ['ion-grid', 'ion-row', 'ion-col'] },
-    { components: ['ion-hide-when', 'ion-show-when'] },
     { components: ['ion-infinite-scroll', 'ion-infinite-scroll-content'] },
     { components: ['ion-input'] },
     { components: ['ion-textarea'] },
@@ -30,6 +31,7 @@ export const config: Config = {
     { components: ['ion-nav', 'ion-nav-pop', 'ion-nav-push', 'ion-nav-set-root'] },
     { components: ['ion-img'] },
     { components: ['ion-popover', 'ion-popover-controller'] },
+    { components: ['ion-progress-bar'] },
     { components: ['ion-radio', 'ion-radio-group'] },
     { components: ['ion-range'] },
     { components: ['ion-refresher', 'ion-refresher-content'] },
@@ -42,7 +44,8 @@ export const config: Config = {
     { components: ['ion-slides', 'ion-slide'] },
     { components: ['ion-spinner'] },
     { components: ['ion-split-pane'] },
-    { components: ['ion-tabs', 'ion-tab', 'ion-tabbar'] },
+    { components: ['ion-tabs', 'ion-tab'] },
+    { components: ['ion-tab-bar', 'ion-tab-button'] },
     { components: ['ion-text'] },
     { components: ['ion-toast', 'ion-toast-controller'] },
     { components: ['ion-toggle'] },
@@ -61,13 +64,24 @@ export const config: Config = {
       strict: true
     },
     {
+      type: 'docs-json',
+      file: '../docs/core.json'
+    },
+    {
       type: 'stats',
       file: 'stats.json'
+    },
+    {
+      type: 'docs-custom',
+      generator: apiSpecGenerator({
+        file: 'api.txt'
+      })
     },
     {
       type: 'angular',
       componentCorePackage: '@ionic/core',
       directivesProxyFile: '../angular/src/directives/proxies.ts',
+      directivesUtilsFile: '../angular/src/directives/proxies-utils.ts',
       directivesArrayFile: '../angular/src/directives/proxies-list.txt',
       excludeComponents: [
         // overlays
@@ -89,7 +103,6 @@ export const config: Config = {
 
         // controllers
         'ion-menu-controller',
-        'ion-animation-controller',
 
         // navigation
         'ion-router',
@@ -98,16 +111,19 @@ export const config: Config = {
         'ion-router-outlet',
         'ion-anchor',
 
+        // tabs
+        'ion-tabs',
+        'ion-tab',
+
         // auxiliar
         'ion-picker-column',
-        'ion-anchor',
         'ion-virtual-scroll'
       ]
     }
   ],
   testing: {
     allowableMismatchedPixels: 200,
-    pixelmatchThreshold: 0.1,
+    pixelmatchThreshold: 0.05,
     emulate: [
       {
         userAgent: 'iPhone',

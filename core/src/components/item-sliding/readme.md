@@ -29,18 +29,117 @@ Options can be expanded to take up the full width of the item if you swipe past 
 <!-- Auto Generated Below -->
 
 
+## Usage
+
+### Angular
+
+```html
+<ion-list>
+  <ion-item-sliding>
+    <ion-item>
+      <ion-label>Item</ion-label>
+    </ion-item>
+    <ion-item-options side="start">
+      <ion-item-option (click)="favorite(item)">Favorite</ion-item-option>
+      <ion-item-option color="danger" (click)="share(item)">Share</ion-item-option>
+    </ion-item-options>
+
+    <ion-item-options side="end">
+      <ion-item-option (click)="unread(item)">Unread</ion-item-option>
+    </ion-item-options>
+  </ion-item-sliding>
+</ion-list>
+```
+
+
+### Javascript
+
+```html
+<ion-list>
+  <ion-item-sliding>
+    <ion-item>
+      <ion-label>Item</ion-label>
+    </ion-item>
+    <ion-item-options side="start">
+      <ion-item-option onClick="favorite(item)">Favorite</ion-item-option>
+      <ion-item-option color="danger" onClick="share(item)">Share</ion-item-option>
+    </ion-item-options>
+
+    <ion-item-options side="end">
+      <ion-item-option onClick="unread(item)">Unread</ion-item-option>
+    </ion-item-options>
+  </ion-item-sliding>
+</ion-list>
+```
+
+
+### React
+
+```tsx
+import React from 'react';
+
+import { IonList, IonItemSliding, IonItem, IonLabel, IonItemOptions, IonItemOption } from '@ionic/react';
+
+const Example: React.SFC<{}> = () => (
+
+<IonList>
+  <IonItemSliding>
+    <IonItem>
+      <IonLabel>Item</IonLabel>
+    </IonItem>
+    <IonItemOptions side="start">
+      <IonItemOption onClick={() => {}}>Favorite</IonItemOption>
+      <IonItemOption color="danger" onClick={() => {}}>Share</IonItemOption>
+    </IonItemOptions>
+
+    <IonItemOptions side="end">
+      <IonItemOption onClick={() => {}}>Unread</IonItemOption>
+    </IonItemOptions>
+  </IonItemSliding>
+</IonList>
+
+);
+
+export default Example;
+```
+
+
+### Vue
+
+```html
+<template>
+  <ion-list>
+    <ion-item-sliding>
+      <ion-item>
+        <ion-label>Item</ion-label>
+      </ion-item>
+      <ion-item-options side="start">
+        <ion-item-option @click="favorite(item)">Favorite</ion-item-option>
+        <ion-item-option color="danger" @click="share(item)">Share</ion-item-option>
+      </ion-item-options>
+
+      <ion-item-options side="end">
+        <ion-item-option @click="unread(item)">Unread</ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+</template>
+```
+
+
+
 ## Properties
 
-| Property   | Attribute  | Description                                                                     | Type      |
-| ---------- | ---------- | ------------------------------------------------------------------------------- | --------- |
-| `disabled` | `disabled` | If `true`, the user cannot interact with the sliding-item. Defaults to `false`. | `boolean` |
+| Property   | Attribute  | Description                                                | Type      | Default |
+| ---------- | ---------- | ---------------------------------------------------------- | --------- | ------- |
+| `disabled` | `disabled` | If `true`, the user cannot interact with the sliding-item. | `boolean` | `false` |
 
 
 ## Events
 
-| Event     | Description                                |
-| --------- | ------------------------------------------ |
-| `ionDrag` | Emitted when the sliding position changes. |
+| Event     | Description                                | Type                |
+| --------- | ------------------------------------------ | ------------------- |
+| `ionDrag` | Emitted when the sliding position changes. | `CustomEvent<void>` |
 
 
 ## Methods

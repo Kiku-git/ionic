@@ -1,14 +1,11 @@
-import { newE2EPage } from '@stencil/core/testing';
+import { testModal } from '../test.utils';
 
-it('modal: basic', async () => {
-  const page = await newE2EPage({
-    url: '/src/components/modal/test/basic?ionic:_testing=true'
-  });
+const DIRECTORY = 'basic';
 
-  await page.click('.e2ePresentModal');
-  const popover = await page.find('ion-modal');
-  expect(popover).not.toBeNull();
+test('modal: basic', async () => {
+  await testModal(DIRECTORY, '#basic-modal');
+});
 
-  const compare = await page.compareScreenshot();
-  expect(compare).toMatchScreenshot();
+test('modal:rtl: basic', async () => {
+  await testModal(DIRECTORY, '#basic-modal', true);
 });

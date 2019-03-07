@@ -3,26 +3,35 @@ version: 2
 aliases:
   - &restore-cache
       keys:
-        - dependency-cache-{{ checksum "package.json" }}-2
+        - dependency-cache-{{ checksum "package.json" }}-3
 
   - &save-cache
-      key: dependency-cache-{{ checksum "package.json" }}-2
+      key: dependency-cache-{{ checksum "package.json" }}-3
       paths:
         - node_modules
 
   - &restore-cache-core
       keys:
-        - dependency-cache-{{ checksum "core/package.json" }}-2
+        - dependency-cache-{{ checksum "core/package.json" }}-3
 
   - &save-cache-core
-      key: dependency-cache-{{ checksum "core/package.json" }}-2
+      key: dependency-cache-{{ checksum "core/package.json" }}-3
       paths:
         - core/node_modules
 
+  - &restore-cache-core-stencil
+      keys:
+        - stencil-cache-2
+
+  - &save-cache-core-stencil
+      key: stencil-cache-2
+      paths:
+        - core/.stencil
+        - core/screenshot/images
 
 defaults: &defaults
   docker:
-    - image: circleci/node:latest-browsers
+    - image: circleci/node:10-browsers
   working_directory: /tmp/workspace
 
 jobs:
@@ -45,13 +54,38 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - restore_cache: *restore-cache-core
+      - restore_cache: *restore-cache-core-stencil
       - run:
           command: npm install
           working_directory: /tmp/workspace/core
       - save_cache: *save-cache-core
       - run:
-          command: npm run build # --max-workers 1 --debug
+          command: npm run build -- --max-workers 1
           working_directory: /tmp/workspace/core
+      - save_cache: *save-cache-core-stencil
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - "*"
+
+  build-angular:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          command: npm install
+          working_directory: /tmp/workspace/angular
+      - run:
+          command: sudo npm link
+          working_directory: /tmp/workspace/core
+      - run:
+          command: sudo npm link @ionic/core
+          working_directory: /tmp/workspace/angular
+      - run:
+          command: npm run build
+          working_directory: /tmp/workspace/angular
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
@@ -106,7 +140,7 @@ jobs:
           at: /tmp/workspace
       - run:
           name: Run Screenshot
-          command: npx stencil test --e2e --screenshot --screenshot-connector=scripts/screenshot/ci.js --ci --runInBand || true
+          command: npx stencil test --e2e --screenshot --screenshot-connector=scripts/screenshot/ci.js --ci || true
           working_directory: /tmp/workspace/core
 
   test-core-screenshot-master:
@@ -117,8 +151,31 @@ jobs:
           at: /tmp/workspace
       - run:
           name: Run Screenshot
-          command: npx stencil test --e2e --screenshot --screenshot-connector=scripts/screenshot/ci.js --ci --runInBand --update-screenshot || true
+          command: npx stencil test --e2e --screenshot --screenshot-connector=scripts/screenshot/ci.js --ci --update-screenshot || true
           working_directory: /tmp/workspace/core
+
+  test-angular-lint:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          command: npm run lint
+          working_directory: /tmp/workspace/angular
+
+  test-angular-e2e:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          command: npm install
+          working_directory: /tmp/workspace/angular/test/test-app
+      - run:
+          command: npm test
+          working_directory: /tmp/workspace/angular/test/test-app
 
 workflows:
   version: 2
@@ -145,3 +202,10 @@ workflows:
           filters:
             branches:
               only: master
+
+      - build-angular:
+          requires: [build-core]
+      - test-angular-lint:
+          requires: [build-angular]
+      - test-angular-e2e:
+          requires: [build-angular]

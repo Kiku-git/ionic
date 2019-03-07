@@ -28,7 +28,6 @@ export class Popover implements ComponentInterface, OverlayInterface {
 
   @Element() el!: HTMLElement;
 
-  @Prop({ connect: 'ion-animation-controller' }) animationCtrl!: HTMLIonAnimationControllerElement;
   @Prop({ context: 'config' }) config!: Config;
 
   /** @internal */
@@ -39,7 +38,6 @@ export class Popover implements ComponentInterface, OverlayInterface {
 
   /**
    * The mode determines which platform styles to use.
-   * Possible values are: `"ios"` or `"md"`.
    */
   @Prop() mode!: Mode;
 
@@ -75,7 +73,7 @@ export class Popover implements ComponentInterface, OverlayInterface {
   @Prop() cssClass?: string | string[];
 
   /**
-   * If `true`, the popover will be dismissed when the backdrop is clicked. Defaults to `true`.
+   * If `true`, the popover will be dismissed when the backdrop is clicked.
    */
   @Prop() backdropDismiss = true;
 
@@ -85,29 +83,19 @@ export class Popover implements ComponentInterface, OverlayInterface {
   @Prop() event: any;
 
   /**
-   * If `true`, a backdrop will be displayed behind the popover. Defaults to `true`.
+   * If `true`, a backdrop will be displayed behind the popover.
    */
   @Prop() showBackdrop = true;
 
   /**
-   * If `true`, the popover will be translucent. Defaults to `false`.
+   * If `true`, the popover will be translucent.
    */
   @Prop() translucent = false;
 
   /**
-   * If `true`, the popover will animate. Defaults to `true`.
+   * If `true`, the popover will animate.
    */
   @Prop() animated = true;
-
-  /**
-   * Emitted after the popover has loaded.
-   */
-  @Event() ionPopoverDidLoad!: EventEmitter<void>;
-
-  /**
-   * Emitted after the popover has unloaded.
-   */
-  @Event() ionPopoverDidUnload!: EventEmitter<void>;
 
   /**
    * Emitted after the popover has presented.
@@ -128,14 +116,6 @@ export class Popover implements ComponentInterface, OverlayInterface {
    * Emitted after the popover has dismissed.
    */
   @Event({ eventName: 'ionPopoverDidDismiss' }) didDismiss!: EventEmitter<OverlayEventDetail>;
-
-  componentDidLoad() {
-    this.ionPopoverDidLoad.emit();
-  }
-
-  componentDidUnload() {
-    this.ionPopoverDidUnload.emit();
-  }
 
   @Listen('ionDismiss')
   protected onDismiss(ev: UIEvent) {
@@ -217,16 +197,15 @@ export class Popover implements ComponentInterface, OverlayInterface {
   }
 
   hostData() {
-
     return {
+      'aria-modal': 'true',
+      'no-router': true,
       style: {
         zIndex: 20000 + this.overlayIndex,
       },
-      'no-router': true,
       class: {
-        'popover-translucent': this.translucent,
-
         ...getClassMap(this.cssClass),
+        'popover-translucent': this.translucent
       }
     };
   }

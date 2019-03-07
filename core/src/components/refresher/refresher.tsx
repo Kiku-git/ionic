@@ -38,7 +38,7 @@ export class Refresher implements ComponentInterface {
 
   /**
    * The minimum distance the user must pull down until the
-   * refresher will go into the `refreshing` state. Defaults to `60`.
+   * refresher will go into the `refreshing` state.
    */
   @Prop() pullMin = 60;
 
@@ -49,19 +49,18 @@ export class Refresher implements ComponentInterface {
    */
   @Prop() pullMax: number = this.pullMin + 60;
 
-  // TODO: NEVER USED
   /**
-   * Time it takes to close the refresher. Defaults to `280ms`.
+   * Time it takes to close the refresher.
    */
   @Prop() closeDuration = '280ms';
 
   /**
-   * Time it takes the refresher to to snap back to the `refreshing` state. Defaults to `280ms`.
+   * Time it takes the refresher to to snap back to the `refreshing` state.
    */
   @Prop() snapbackDuration = '280ms';
 
   /**
-   * If `true`, the refresher will be hidden. Defaults to `false`.
+   * If `true`, the refresher will be hidden.
    */
   @Prop() disabled = false;
   @Watch('disabled')
@@ -102,7 +101,7 @@ export class Refresher implements ComponentInterface {
       console.error('ion-refresher did not attach, make sure the parent is an ion-content.');
     }
 
-    this.gesture = (await import('../../utils/gesture/gesture')).createGesture({
+    this.gesture = (await import('../../utils/gesture')).createGesture({
       el: this.el.closest('ion-content') as any,
       queue: this.queue,
       gestureName: 'refresher',
@@ -121,6 +120,10 @@ export class Refresher implements ComponentInterface {
 
   componentDidUnload() {
     this.scrollEl = undefined;
+    if (this.gesture) {
+      this.gesture.destroy();
+      this.gesture = undefined;
+    }
   }
 
   /**
@@ -175,8 +178,6 @@ export class Refresher implements ComponentInterface {
   }
 
   private onStart() {
-    console.log('start');
-
     this.progress = 0;
     this.state = RefresherState.Inactive;
   }
@@ -236,7 +237,9 @@ export class Refresher implements ComponentInterface {
     }
 
     // prevent native scroll events
-    ev.preventDefault();
+    if (ev.cancelable) {
+      ev.preventDefault();
+    }
 
     // the refresher is actively pulling at this point
     // move the scroll element within the content element
@@ -325,7 +328,7 @@ export class Refresher implements ComponentInterface {
     // reset set the styles on the scroll element
     // set that the refresh is actively cancelling/completing
     this.state = state;
-    this.setCss(0, '', true, delay);
+    this.setCss(0, this.closeDuration, true, delay);
 
     // TODO: stop gesture
   }

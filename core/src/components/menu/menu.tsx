@@ -1,7 +1,7 @@
 import { Component, ComponentInterface, Element, Event, EventEmitter, EventListenerEnable, Listen, Method, Prop, QueueApi, State, Watch } from '@stencil/core';
 
 import { Animation, Config, Gesture, GestureDetail, MenuChangeEventDetail, MenuControllerI, MenuI, Mode, Side } from '../../interface';
-import { GESTURE_CONTROLLER } from '../../utils/gesture/gesture-controller';
+import { GESTURE_CONTROLLER } from '../../utils/gesture';
 import { assert, isEndSide as isEnd } from '../../utils/helpers';
 
 @Component({
@@ -57,7 +57,7 @@ export class Menu implements ComponentInterface, MenuI {
    * The display type of the menu.
    * Available options: `"overlay"`, `"reveal"`, `"push"`.
    */
-  @Prop({ mutable: true }) type!: string;
+  @Prop({ mutable: true }) type?: string;
 
   @Watch('type')
   typeChanged(type: string, oldType: string | undefined) {
@@ -77,7 +77,7 @@ export class Menu implements ComponentInterface, MenuI {
   }
 
   /**
-   * If `true`, the menu is disabled. Default `false`.
+   * If `true`, the menu is disabled.
    */
   @Prop({ mutable: true }) disabled = false;
 
@@ -92,7 +92,7 @@ export class Menu implements ComponentInterface, MenuI {
   }
 
   /**
-   * Which side of the view the menu should be placed. Default `"start"`.
+   * Which side of the view the menu should be placed.
    */
   @Prop({ reflectToAttr: true }) side: Side = 'start';
 
@@ -102,7 +102,7 @@ export class Menu implements ComponentInterface, MenuI {
   }
 
   /**
-   * If `true`, swiping the menu is enabled. Default `true`.
+   * If `true`, swiping the menu is enabled.
    */
   @Prop() swipeGesture = true;
 
@@ -137,13 +137,14 @@ export class Menu implements ComponentInterface, MenuI {
 
   /**
    * Emitted when the menu state is changed.
-   *
    * @internal
    */
   @Event() protected ionMenuChange!: EventEmitter<MenuChangeEventDetail>;
 
   async componentWillLoad() {
-    this.type = this.type || this.config.get('menuType', this.mode === 'ios' ? 'reveal' : 'overlay');
+    if (this.type === undefined) {
+      this.type = this.config.get('menuType', this.mode === 'ios' ? 'reveal' : 'overlay');
+    }
 
     if (this.isServer) {
       this.disabled = true;
@@ -154,14 +155,12 @@ export class Menu implements ComponentInterface, MenuI {
     const el = this.el;
     const parent = el.parentNode as any;
     const content = this.contentId !== undefined
-      ? document.getElementById(this.contentId)
+      ? this.doc.getElementById(this.contentId)
       : parent && parent.querySelector && parent.querySelector('[main]');
 
     if (!content || !content.tagName) {
       // requires content element
-      console.error(
-        'Menu: must have a "content" element to listen for drag events on.'
-      );
+      console.error('Menu: must have a "content" element to listen for drag events on.');
       return;
     }
     this.contentEl = content as HTMLElement;
@@ -169,17 +168,17 @@ export class Menu implements ComponentInterface, MenuI {
     // add menu's content classes
     content.classList.add('menu-content');
 
-    this.typeChanged(this.type, undefined);
+    this.typeChanged(this.type!, undefined);
     this.sideChanged();
 
     // register this menu with the app's menu controller
     menuCtrl!._register(this);
 
-    this.gesture = (await import('../../utils/gesture/gesture')).createGesture({
+    this.gesture = (await import('../../utils/gesture')).createGesture({
       el: this.doc,
       queue: this.queue,
       gestureName: 'menu-swipe',
-      gesturePriority: 40,
+      gesturePriority: 30,
       threshold: 10,
       canStart: ev => this.canStart(ev),
       onWillStart: () => this.onWillStart(),
@@ -202,6 +201,7 @@ export class Menu implements ComponentInterface, MenuI {
     }
     if (this.gesture) {
       this.gesture.destroy();
+      this.gesture = undefined;
     }
 
     this.animation = undefined;
@@ -313,7 +313,7 @@ export class Menu implements ComponentInterface, MenuI {
       this.animation = undefined;
     }
     // Create new animation
-    this.animation = await this.menuCtrl!._createAnimation(this.type, this);
+    this.animation = await this.menuCtrl!._createAnimation(this.type!, this);
   }
 
   private async startAnimation(shouldOpen: boolean, animated: boolean): Promise<void> {

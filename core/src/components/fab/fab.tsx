@@ -11,13 +11,11 @@ export class Fab implements ComponentInterface {
 
   /**
    * Where to align the fab horizontally in the viewport.
-   * Possible values are: `"center"`, `"start"`, `"end"`.
    */
   @Prop() horizontal?: 'start' | 'end' | 'center';
 
   /**
    * Where to align the fab vertically in the viewport.
-   * Possible values are: `"top"`, `"center"`, `"bottom"`.
    */
   @Prop() vertical?: 'top' | 'bottom' | 'center';
 
@@ -36,7 +34,7 @@ export class Fab implements ComponentInterface {
   @Watch('activated')
   activatedChanged() {
     const activated = this.activated;
-    const fab = this.el.querySelector('ion-fab-button');
+    const fab = this.getFab();
     if (fab) {
       fab.activated = activated;
     }
@@ -51,10 +49,17 @@ export class Fab implements ComponentInterface {
     }
   }
 
+  getFab() {
+    return this.el.querySelector('ion-fab-button');
+  }
+
   @Listen('click')
   onClick() {
     const hasList = !!this.el.querySelector('ion-fab-list');
-    if (hasList) {
+    const getButton = this.getFab();
+    const isButtonDisabled = getButton && getButton.disabled;
+
+    if (hasList && !isButtonDisabled) {
       this.activated = !this.activated;
     }
   }
@@ -70,8 +75,8 @@ export class Fab implements ComponentInterface {
   hostData() {
     return {
       class: {
-        [`fab-horizontal-${this.horizontal}`]: !!this.horizontal,
-        [`fab-vertical-${this.vertical}`]: !!this.vertical,
+        [`fab-horizontal-${this.horizontal}`]: this.horizontal !== undefined,
+        [`fab-vertical-${this.vertical}`]: this.vertical !== undefined,
         'fab-edge': this.edge
       }
     };

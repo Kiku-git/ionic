@@ -18,57 +18,64 @@ If you're using Angular, please see [ion-router-outlet](../router-outlet) instea
 <!-- Auto Generated Below -->
 
 
+## Usage
+
+### Javascript
+
+```html
+<ion-router>
+  <ion-route component="page-tabs">
+    <ion-route url="/schedule" component="tab-schedule">
+      <ion-route component="page-schedule"></ion-route>
+      <ion-route url="/session/:sessionId" component="page-session"></ion-route>
+    </ion-route>
+
+    <ion-route url="/speakers" component="tab-speaker">
+      <ion-route component="page-speaker-list"></ion-route>
+      <ion-route url="/session/:sessionId" component="page-session"></ion-route>
+      <ion-route url="/:speakerId" component="page-speaker-detail"></ion-route>
+    </ion-route>
+
+    <ion-route url="/map" component="page-map"></ion-route>
+    <ion-route url="/about" component="page-about"></ion-route>
+  </ion-route>
+
+  <ion-route url="/tutorial" component="page-tutorial"></ion-route>
+  <ion-route url="/login" component="page-login"></ion-route>
+  <ion-route url="/account" component="page-account"></ion-route>
+  <ion-route url="/signup" component="page-signup"></ion-route>
+  <ion-route url="/support" component="page-support"></ion-route>
+</ion-router>
+
+```
+
+
+
 ## Properties
 
-| Property  | Attribute  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Type      |
-| --------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| `root`    | `root`     | By default `ion-router` will match the routes at the root path ("/"). That can be changed when                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | `string`  |
-| `useHash` | `use-hash` | The router can work in two "modes": - With hash: `/index.html#/path/to/page` - Without hash: `/path/to/page`  Using one or another might depend in the requirements of your app and/or where it's deployed.  Usually "hash-less" navigation works better for SEO and it's more user friendly too, but it might requires additional server-side configuration in order to properly work.  On the otherside hash-navigation is much easier to deploy, it even works over the file protocol.  By default, this property is `true`, change to `false` to allow hash-less URLs. | `boolean` |
+| Property  | Attribute  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Type      | Default |
+| --------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ------- |
+| `root`    | `root`     | By default `ion-router` will match the routes at the root path ("/"). That can be changed when                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | `string`  | `'/'`   |
+| `useHash` | `use-hash` | The router can work in two "modes": - With hash: `/index.html#/path/to/page` - Without hash: `/path/to/page`  Using one or another might depend in the requirements of your app and/or where it's deployed.  Usually "hash-less" navigation works better for SEO and it's more user friendly too, but it might requires additional server-side configuration in order to properly work.  On the otherside hash-navigation is much easier to deploy, it even works over the file protocol.  By default, this property is `true`, change to `false` to allow hash-less URLs. | `boolean` | `true`  |
 
 
 ## Events
 
-| Event                | Description                                     |
-| -------------------- | ----------------------------------------------- |
-| `ionRouteDidChange`  | Emitted when the route had changed              |
-| `ionRouteWillChange` | Event emitted when the route is about to change |
+| Event                | Description                                     | Type                             |
+| -------------------- | ----------------------------------------------- | -------------------------------- |
+| `ionRouteDidChange`  | Emitted when the route had changed              | `CustomEvent<RouterEventDetail>` |
+| `ionRouteWillChange` | Event emitted when the route is about to change | `CustomEvent<RouterEventDetail>` |
 
 
 ## Methods
 
-### `goBack() => Promise<void>`
+### `back() => Promise<void>`
 
 Go back to previous page in the window.history.
 
 #### Returns
 
 Type: `Promise<void>`
-
-
-
-### `navChanged(intent: number) => Promise<boolean>`
-
-
-
-#### Parameters
-
-| Name     | Type     | Description |
-| -------- | -------- | ----------- |
-| `intent` | `number` |             |
-
-#### Returns
-
-Type: `Promise<boolean>`
-
-
-
-### `printDebug() => void`
-
-
-
-#### Returns
-
-Type: `void`
 
 
 

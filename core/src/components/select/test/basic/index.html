@@ -5,9 +5,10 @@
   <meta charset="UTF-8">
   <title>Select - Basic</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <script src="/dist/ionic.js"></script>
-  <link rel="stylesheet" type="text/css" href="/css/ionic.bundle.css">
-  <script src="/scripts/screenshot/testing.js"></script>
+  <link href="../../../../../css/ionic.bundle.css" rel="stylesheet">
+  <link href="../../../../../scripts/testing/styles.css" rel="stylesheet">
+  <script src="../../../../../scripts/testing/scripts.js"></script>
+  <script src="../../../../../dist/ionic.js"></script>
 </head>
 
 <body>
@@ -43,7 +44,7 @@
 
         <ion-item>
           <ion-label>Skittles</ion-label>
-          <ion-select id="customSelect" interface="action-sheet" name="skittles">
+          <ion-select id="skittles" interface="action-sheet" name="skittles">
             <ion-select-option value="red">Red</ion-select-option>
             <ion-select-option value="purple">Purple</ion-select-option>
             <ion-select-option value="yellow">Yellow</ion-select-option>
@@ -55,12 +56,21 @@
       </ion-list>
 
       <ion-list>
-        <ion-list-header>Select - Custom Interface Options</ion-list-header>
+        <ion-list-header>Object Values with trackBy</ion-list-header>
 
         <ion-item>
+          <ion-label>Users</ion-label>
+          <ion-select id="objectSelectCompareWith"></ion-select>
+        </ion-item>
+      </ion-list>
+
+      <ion-list>
+        <ion-list-header>Select - Custom Interface Options</ion-list-header>
+
+        <ion-item color="danger">
           <ion-label>Alert</ion-label>
           <ion-select id="customAlertSelect" interface="alert" multiple="true" placeholder="Select One">
-            <ion-select-option value="bacon">Bacon</ion-select-option>
+            <ion-select-option value="bacon" selected>Bacon</ion-select-option>
             <ion-select-option value="olives">Black Olives</ion-select-option>
             <ion-select-option value="xcheese">Extra Cheese</ion-select-option>
             <ion-select-option value="peppers">Green Peppers</ion-select-option>
@@ -73,7 +83,7 @@
           </ion-select>
         </ion-item>
 
-        <ion-item>
+        <ion-item color="dark">
           <ion-label>Popover</ion-label>
           <ion-select id="customPopoverSelect" interface="popover" placeholder="Select One">
             <ion-select-option value="brown">Brown</ion-select-option>
@@ -83,7 +93,7 @@
           </ion-select>
         </ion-item>
 
-        <ion-item>
+        <ion-item color="primary">
           <ion-label>Action Sheet</ion-label>
           <ion-select id="customActionSheetSelect" interface="action-sheet" placeholder="Select One">
             <ion-select-option value="red">Red</ion-select-option>
@@ -272,7 +282,55 @@
 
     </ion-content>
 
+    <style>
+      .outer-content {
+        --background: #f2f2f2;
+      }
+    </style>
+
     <script>
+      let objectOptions = [
+        {
+          id: 1,
+          first: 'Alice',
+          last: 'Smith',
+        },
+        {
+          id: 2,
+          first: 'Bob',
+          last: 'Davis',
+        },
+        {
+          id: 3,
+          first: 'Charlie',
+          last: 'Rosenburg',
+        }
+      ];
+
+      let compareWithFn = (o1, o2) => {
+        return o1 && o2 ? o1.id === o2.id : o1 === o2;
+      };
+
+      let objectSelectElement = document.getElementById('objectSelectCompareWith');
+      objectSelectElement.compareWith = compareWithFn; // 'id';
+      
+      objectOptions.forEach((option, i) => {
+        let selectOption = document.createElement('ion-select-option');
+        selectOption.value = option;
+        selectOption.textContent = option.first + ' ' + option.last;
+        selectOption.selected = (i === 0);
+        
+        objectSelectElement.appendChild(selectOption)
+      });
+
+      setTimeout(() => {
+        objectSelectElement.value = {
+          id: 1,
+          first: 'Alice',
+          last: 'Smith',
+        };
+      }, 3000);
+      
       var pets = document.getElementById('pets');
       pets.value = ['bird', 'dog'];
 

@@ -9,8 +9,9 @@
   --padding-bottom: 0;
   --padding-start: 8px;
   --padding-end: 8px;
-  --height: 32px;
   --box-shadow: none;
+
+  height: 32px;
 
   font-size: #{$toolbar-md-button-font-size};
   font-weight: 500;
@@ -25,8 +26,10 @@
 // --------------------------------------------------
 
 :host-context(.ion-color)::slotted(*) .button {
-  --color: currentColor;
-  --color-activated: currentColor;
+  --color: initial;
+  --color-activated: initial;
+  --color-focused: initial;
+  --background-focused: #{ion-color(primary, contrast, 0.1)};
 }
 
 
@@ -34,10 +37,10 @@
 // --------------------------------------------------
 
 ::slotted(*) .button-solid {
-  --color: #{$toolbar-md-background-color};
-  --color-activated: #{$toolbar-md-background-color};
-  --background: #{$toolbar-md-text-color};
-  --background-activated: #{$toolbar-md-text-color};
+  --color: #{$toolbar-md-background};
+  --color-activated: #{$toolbar-md-background};
+  --background: #{$toolbar-md-color};
+  --background-activated: #{$toolbar-md-color};
 }
 
 
@@ -45,7 +48,7 @@
 // --------------------------------------------------
 
 ::slotted(*) .button-outline {
-  --color: currentColor;
+  --color: initial;
   --color-activated: currentColor;
   --background: transparent;
   --background-activated: transparent;
@@ -57,7 +60,7 @@
 // --------------------------------------------------
 
 ::slotted(*) .button-clear {
-  --color: currentColor;
+  --color: initial;
   --color-activated: currentColor;
   --background: transparent;
 }
@@ -84,28 +87,4 @@
   @include margin(0);
 
   font-size: 1.8em;
-}
-
-
-// Material Design Toolbar Button Placement
-// --------------------------------------------------
-
-:host([slot="start"]) {
-  order: map-get($toolbar-order-md, buttons-start);
-}
-
-:host([slot="secondary"]) {
-  order: map-get($toolbar-order-md, buttons-secondary);
-}
-
-:host([slot="primary"]) {
-  order: map-get($toolbar-order-md, buttons-primary);
-
-  text-align: end;
-}
-
-:host([slot="end"]) {
-  order: map-get($toolbar-order-md, buttons-end);
-
-  text-align: end;
 }

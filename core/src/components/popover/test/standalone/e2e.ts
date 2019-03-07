@@ -1,14 +1,7 @@
-import { newE2EPage } from '@stencil/core/testing';
+import { testPopover } from '../test.utils';
 
-it('popover: standalone', async () => {
-  const page = await newE2EPage({
-    url: '/src/components/popover/test/standalone?ionic:_testing=true'
-  });
+const DIRECTORY = 'standalone';
 
-  await page.click('#basic');
-  const popover = await page.find('ion-popover');
-  expect(popover).not.toBeNull();
-
-  const compare = await page.compareScreenshot();
-  expect(compare).toMatchScreenshot();
+test('popover: standalone', async () => {
+  await testPopover(DIRECTORY, '#basic-popover');
 });

@@ -1,16 +1,55 @@
-import { newE2EPage } from '@stencil/core/testing';
+import { testLoading } from '../test.utils';
 
-it('loading: basic', async () => {
-  const page = await newE2EPage({
-    url: '/src/components/loading/test/basic?ionic:_testing=true'
-  });
+const DIRECTORY = 'basic';
 
-  await page.click('#basic');
-  const loading = await page.find('ion-loading');
-  expect(loading).not.toBeNull();
+test('loading: basic', async () => {
+  await testLoading(DIRECTORY, '#basic-loading');
+});
 
-  await loading.waitForVisible();
+test('loading: long content basic', async () => {
+  await testLoading(DIRECTORY, '#long-content-loading');
+});
 
-  const compare = await page.compareScreenshot();
-  expect(compare).toMatchScreenshot();
+test('loading: no spinner basic', async () => {
+  await testLoading(DIRECTORY, '#no-spinner-loading');
+});
+
+test('loading: translucent basic', async () => {
+  await testLoading(DIRECTORY, '#translucent-loading');
+});
+
+test('loading: custom class basic', async () => {
+  await testLoading(DIRECTORY, '#custom-class-loading');
+});
+
+test('loading: backdrop standalone', async () => {
+  await testLoading(DIRECTORY, '#backdrop-loading');
+});
+
+/**
+ * RTL Tests
+ */
+
+test('loading:rtl: basic basic', async () => {
+  await testLoading(DIRECTORY, '#basic-loading', true);
+});
+
+test('loading:rtl: long content basic', async () => {
+  await testLoading(DIRECTORY, '#long-content-loading', true);
+});
+
+test('loading:rtl: no spinner basic', async () => {
+  await testLoading(DIRECTORY, '#no-spinner-loading', true);
+});
+
+test('loading:rtl: translucent basic', async () => {
+  await testLoading(DIRECTORY, '#translucent-loading', true);
+});
+
+test('loading:rtl: custom class basic', async () => {
+  await testLoading(DIRECTORY, '#custom-class-loading', true);
+});
+
+test('loading:rtl: backdrop standalone', async () => {
+  await testLoading(DIRECTORY, '#backdrop-loading', true);
 });
